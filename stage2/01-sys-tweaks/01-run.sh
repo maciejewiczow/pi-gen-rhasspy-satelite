@@ -76,3 +76,32 @@ sed -i 's/^#\?Storage=.*/Storage=volatile/' "${ROOTFS_DIR}/etc/systemd/journald.
 if [ -e "${ROOTFS_DIR}/etc/avahi/avahi-daemon.conf" ]; then
   sed -i 's/^#\?publish-workstation=.*/publish-workstation=yes/' "${ROOTFS_DIR}/etc/avahi/avahi-daemon.conf"
 fi
+
+touch "${ROOTFS_DIR}/boot/ssh"
+
+mkdir -p "${ROOTFS_DIR}/etc/wpa_supplicant"
+cat <<EOF > "${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf"
+country=PL
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+network={
+    ssid="${WIFI_SSID}"
+    psk="${WIFI_PASSWORD}"
+}
+
+EOF
+
+chmod 600 "${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf"
+
+on_chroot << EOF
+systemctl enable ssh
+systemctl enable wpa_supplicant
+systemctl enable dhcpcd
+EOF
+
+cat <<EOF > "${ROOTFS_DIR}/etc/docker/daemon.json"
+{
+  "experimental": true
+}
+
+EOF
