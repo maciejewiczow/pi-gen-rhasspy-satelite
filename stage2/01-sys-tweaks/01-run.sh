@@ -94,14 +94,6 @@ EOF
 chmod 600 "${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf"
 
 on_chroot << EOF
-systemctl enable ssh
 systemctl enable wpa_supplicant
 systemctl enable dhcpcd
-EOF
-
-cat <<EOF > "${ROOTFS_DIR}/etc/docker/daemon.json"
-{
-  "experimental": true
-}
-
 EOF
