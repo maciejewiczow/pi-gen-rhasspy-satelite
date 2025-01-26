@@ -84,14 +84,13 @@ cat <<EOF > "${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf"
 country=PL
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
-network={
-    ssid="${WIFI_SSID}"
-    psk="${WIFI_PASSWORD}"
-}
-
 EOF
 
 chmod 600 "${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf"
+
+on_chroot << EOF
+wpa_passphrase "${WIFI_SSID}" "${WIFI_PASSWORD}" >> /etc/wpa_supplicant/wpa_supplicant.conf
+EOF
 
 on_chroot << EOF
 systemctl enable wpa_supplicant
