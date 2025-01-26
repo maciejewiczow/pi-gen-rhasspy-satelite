@@ -16,3 +16,10 @@ systemctl enable docker
 
 usermod -aG docker pi
 EOF
+
+cat <<EOF > "${ROOTFS_DIR}/etc/docker/daemon.json"
+{
+  "experimental": true
+}
+
+EOF
