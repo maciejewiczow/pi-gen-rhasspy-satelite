@@ -89,10 +89,9 @@ EOF
 chmod 600 "${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf"
 
 on_chroot << EOF
-wpa_passphrase "${WIFI_SSID}" "${WIFI_PASSWORD}" >> /etc/wpa_supplicant/wpa_supplicant.conf
+wpa_passphrase "$WIFI_SSID" "$WIFI_PASS" | sed "/#psk/d" >> /etc/wpa_supplicant/wpa_supplicant.conf
 EOF
 
 on_chroot << EOF
 systemctl enable wpa_supplicant
-systemctl enable dhcpcd
 EOF
